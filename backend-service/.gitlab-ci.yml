@@ -1,0 +1,22 @@
+stages:                                                                                                                                         
+ - build                                                                                                                                        
+ - deploy                                                                                                                                       
+                                                                                                                                                
+maven-build:                                                                                                                                    
+  image: maven:3-jdk-11                                                                                                                         
+  stage: build                                                                                                                                  
+  script: "mvn package -DskipTests"                                                                                                                      
+  artifacts:                                                                                                                                    
+    paths:                                                                                                                                      
+      - target/hcmobile-v2.war
+
+deploy-master:                                                                                                                                  
+  before_script:                                                                                                                                
+    - apt-get update -qq && apt-get install -y -qq sshpass                                                                                      
+  stage: deploy                                                                                                                                 
+  script:                                                                                                                                       
+    - sshpass -V                                                                                                                                
+    - export SSHPASS=$CI_USER_PASS                                                                                                              
+    - sshpass -e scp -o StrictHostKeyChecking=no target/hcmobile-v2.war gitlab-ci@146.190.223.178:/home/gitlab-ci                            
+    - sshpass -e ssh -tt -o StrictHostKeyChecking=no gitlab-ci@146.190.223.178 sudo mv /home/gitlab-ci/hcmobile-v2.war /opt/tomcat/webapps     
+    - sshpass -e ssh -tt -o StrictHostKeyChecking=no gitlab-ci@146.190.223.178 sudo systemctl restart tomcat
