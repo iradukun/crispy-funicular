@@ -15,6 +15,6 @@ public class HcmAppsBackendServiceApplication {
     }
 
     public static void main(String[] args) {
-        SpringApplication.run(HcmAppsBackendServiceApplication.class, args);
+        SpringApplication.run(HsmAppsBackendServiceApplication.class, args);
     }
 }
